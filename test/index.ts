@@ -1,5 +1,5 @@
 const {expect} = require('chai');
-const {ethers} = require('hardhat');
+const { ethers } = require("hardhat");
 import { Signer, Contract } from "ethers";
 
 describe("Token contract", function () {
@@ -14,12 +14,12 @@ describe("Token contract", function () {
   beforeEach(async function () {
       Token = await ethers.getContractFactory("ERC20");
       [owner, addr1, addr2] = await ethers.getSigners();
-      newToken = await Token.deploy(40);
+      newToken = await Token.deploy(0);
     });
 
     describe("Deployment", function () {
       it("Should get correct totalSupply", async function () {
-        expect(await newToken.totalSupply()).to.equal(40);
+        expect(await newToken.totalSupply()).to.equal(0);
       });
 
 
@@ -65,7 +65,7 @@ describe("Token contract", function () {
         await newToken.connect(owner).mint(owner.getAddress(), 200)
         let balance = await newToken.connect(owner).balanceOf(owner.getAddress())
         expect(balance).to.be.eq(200)
-  
+
         await newToken.connect(owner).burn(owner.getAddress(), 100)
         balance = await newToken.connect(owner).balanceOf(owner.getAddress())
         expect(balance).to.be.eq(100)

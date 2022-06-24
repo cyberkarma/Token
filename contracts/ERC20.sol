@@ -33,7 +33,7 @@ contract ERC20 is IERC20 {
 
     constructor(uint initialSupply) {
         owner = msg.sender;
-        mint(initialSupply);
+        mint(msg.sender, initialSupply);
     }
 
     function decimals() external pure override returns(uint) {
@@ -73,28 +73,23 @@ contract ERC20 is IERC20 {
         emit Transfer(sender, recepient, amount);
     }
 
-    function mint(uint amount) public OnlyOwner {
-        balances[msg.sender] += amount;
+    function mint(address account, uint amount) public OnlyOwner {
+        require(account != address(0), "Cant mint to zero address");
+        balances[account] += amount;
         totalTokens += amount;
         emit Transfer(address(0), msg.sender, amount);
     }
 
-    function burn(uint amount) external OnlyOwner {
+    function burn(address account, uint amount) external OnlyOwner {
+        require(account != address(0), "Cant burn from zero address");
+        require(amount <= balances[account], "Amount out of balance");
         balances[msg.sender] -= amount;
         totalTokens -= amount;
         emit Transfer(msg.sender, address(0), amount);
     }
 
-    fallback() external payable {
-
-    }
-
-    receive() external payable {
-
-    }
-
     modifier OnlyOwner {
-        require(owner == msg.sender, "You not an owner");
+        require(owner == msg.sender, "You are not an owner");
         _;
     }
 
